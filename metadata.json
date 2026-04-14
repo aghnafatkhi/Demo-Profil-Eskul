@@ -1,0 +1,5 @@
+{
+  "name": "Demo Profil Ekstrakulikuler",
+  "description": "Website resmi organisasi untuk galeri foto, portofolio anggota, dan karya kreatif.",
+  "requestFramePermissions": ["camera"]
+}

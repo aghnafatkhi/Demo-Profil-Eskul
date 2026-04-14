@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "Event": {
+      "title": "Event",
+      "description": "Dokumentasi acara sekolah",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Nama acara" },
+        "description": { "type": "string", "description": "Deskripsi singkat acara" },
+        "date": { "type": "string", "format": "date", "description": "Tanggal acara" },
+        "coverImage": { "type": "string", "description": "URL gambar sampul" },
+        "googleDriveLink": { "type": "string", "description": "Link Google Drive untuk galeri lengkap" }
+      },
+      "required": ["title", "date", "coverImage"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "Portofolio anggota ekstrakurikuler",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Nama lengkap anggota" },
+        "email": { "type": "string", "description": "Email anggota untuk login" },
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "role": { "type": "string", "description": "Jabatan atau spesialisasi (misal: Editor, Kameramen)" },
+        "kelas": { "type": "string", "description": "Kelas anggota (misal: X-1, XI-IPA)" },
+        "photoUrl": { "type": "string", "description": "URL foto profil" },
+        "instagram": { "type": "string", "description": "Username Instagram (tanpa @)" },
+        "phone": { "type": "string", "description": "Nomor WhatsApp" },
+        "skills": { "type": "array", "items": { "type": "string" }, "description": "Daftar keahlian" },
+        "portfolio": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "link": { "type": "string" }
+            }
+          },
+          "description": "Hasil pekerjaan anggota"
+        }
+      },
+      "required": ["name", "role", "photoUrl"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Karya video utama",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Judul video" },
+        "description": { "type": "string", "description": "Deskripsi video" },
+        "videoUrl": { "type": "string", "description": "URL video (YouTube/Drive)" },
+        "thumbnailUrl": { "type": "string", "description": "URL gambar thumbnail" },
+        "category": { "type": "string", "description": "Kategori (Profil Sekolah, Profil Ekskul, dll)" },
+        "votes": { "type": "number", "description": "Jumlah suara" }
+      },
+      "required": ["title", "videoUrl", "thumbnailUrl"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Catatan kehadiran anggota",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "ID anggota yang hadir" },
+        "userName": { "type": "string", "description": "Nama anggota" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Waktu kehadiran" },
+        "status": { "type": "string", "description": "Status kehadiran (Hadir, dll)" }
+      },
+      "required": ["userId", "userName", "timestamp", "status"]
+    },
+    "UserVote": {
+      "title": "UserVote",
+      "description": "Catatan suara pengguna",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string", "description": "ID proyek yang dipilih" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Waktu memilih" }
+      },
+      "required": ["projectId", "timestamp"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Profil pengguna sistem",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "description": "Email pengguna" },
+        "role": { "type": "string", "enum": ["admin", "user"], "description": "Peran pengguna" },
+        "displayName": { "type": "string", "description": "Nama tampilan" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "events": { "schema": "Event", "description": "Koleksi galeri acara" },
+    "members": { "schema": "Member", "description": "Koleksi profil anggota" },
+    "projects": { "schema": "Project", "description": "Koleksi karya video" },
+    "attendance": { "schema": "Attendance", "description": "Koleksi kehadiran" },
+    "user_votes": { "schema": "UserVote", "description": "Koleksi suara pengguna" },
+    "users": { "schema": "User", "description": "Koleksi profil pengguna" }
+  }
+}

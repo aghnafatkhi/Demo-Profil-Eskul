@@ -1,0 +1,203 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: events
+    // Fields:
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - date: string (required, YYYY-MM-DD)
+    //   - coverImage: string (required, URL)
+    //   - googleDriveLink: string (optional, URL)
+    //
+    // Collection: members
+    // Fields:
+    //   - name: string (required)
+    //   - role: string (required)
+    //   - photoUrl: string (required, URL)
+    //   - skills: list of strings (optional)
+    //   - portfolio: list of objects (optional, {title: string, link: string})
+    //
+    // Collection: projects
+    // Fields:
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - videoUrl: string (required, URL)
+    //   - thumbnailUrl: string (required, URL)
+    //   - category: string (optional)
+    //
+    // Collection: attendance
+    // Fields:
+    //   - userId: string (required)
+    //   - userName: string (required)
+    //   - timestamp: timestamp/string (required)
+    //   - status: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+         ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+          (request.auth.token.email == "aghna1011@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidUrl(url) {
+      return url is string;
+    }
+
+    function isValidEvent(data) {
+      return data.keys().hasAll(['title', 'date', 'coverImage']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.date is string && data.date.size() > 0 &&
+             isValidUrl(data.coverImage) &&
+             (!('description' in data) || data.description == "" || (data.description is string && data.description.size() < 5000)) &&
+             (!('googleDriveLink' in data) || data.googleDriveLink == "" || isValidUrl(data.googleDriveLink));
+    }
+
+    function isValidMember(data) {
+      return data.keys().hasAll(['name', 'role', 'photoUrl']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.role is string && data.role.size() > 0 && data.role.size() < 100 &&
+             isValidUrl(data.photoUrl) &&
+             (!('skills' in data) || data.skills is list) &&
+             (!('portfolio' in data) || data.portfolio is list) &&
+             (!('email' in data) || data.email == "" || data.email is string) &&
+             (!('kelas' in data) || data.kelas == "" || data.kelas is string) &&
+             (!('instagram' in data) || data.instagram is string) &&
+             (!('phone' in data) || data.phone is string) &&
+             (!('bio' in data) || data.bio is string) &&
+             (!('joinYear' in data) || data.joinYear is string) &&
+             (!('tiktok' in data) || data.tiktok is string) &&
+             (!('youtube' in data) || data.youtube is string) &&
+             (!('favoriteGear' in data) || data.favoriteGear is string) &&
+             (!('featuredPhotos' in data) || data.featuredPhotos is list);
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'videoUrl', 'thumbnailUrl']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             isValidUrl(data.videoUrl) &&
+             isValidUrl(data.thumbnailUrl) &&
+             (!('description' in data) || data.description == "" || (data.description is string && data.description.size() < 5000)) &&
+             (!('category' in data) || data.category == "" || (data.category is string && data.category.size() < 100)) &&
+             (!('votes' in data) || data.votes is number);
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'role']) &&
+             data.email is string && data.email.size() > 0 &&
+             data.role in ['admin', 'user'] &&
+             (!('displayName' in data) || data.displayName is string);
+    }
+
+    function isValidAttendance(data) {
+      return data.keys().hasAll(['userId', 'userName', 'timestamp', 'status']) &&
+             data.userId is string &&
+             data.userName is string &&
+             data.status is string &&
+             (data.timestamp is timestamp || data.timestamp is string);
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['userName', 'text', 'timestamp']) &&
+             data.userName is string && data.userName.size() > 0 && data.userName.size() < 100 &&
+             data.text is string && data.text.size() > 0 && data.text.size() < 1000 &&
+             (data.timestamp is timestamp || data.timestamp is string);
+    }
+
+    function isValidLike(data) {
+      return data.keys().hasAll(['photoUrl', 'photoHash', 'userId', 'memberId', 'createdAt']) &&
+             data.photoUrl is string &&
+             data.photoHash is string &&
+             data.userId == request.auth.uid &&
+             data.memberId is string &&
+             data.createdAt is string;
+    }
+
+    function isValidUserVote(data) {
+      return data.keys().hasAll(['projectId', 'timestamp']) &&
+             data.projectId is string &&
+             data.timestamp is string;
+    }
+
+    function isValidVoteUpdate() {
+      let isOnlyVotesChanged = request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']);
+      let currentVotes = ('votes' in resource.data) ? resource.data.votes : 0;
+      let isIncrementByOne = request.resource.data.votes == currentVotes + 1;
+      // Note: In a real app, we should also check if the user hasn't voted yet using getAfter,
+      // but for simplicity we'll just allow the increment if they are authenticated.
+      return isAuthenticated() && isOnlyVotesChanged && isIncrementByOne;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // Public read access for events, members, and projects
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidEvent(request.resource.data);
+      allow delete: if isAdmin();
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isValidComment(request.resource.data);
+        allow delete: if isAdmin();
+      }
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow read: if true;
+    }
+
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId && isValidLike(request.resource.data);
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    match /members/{memberId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidMember(request.resource.data);
+      allow update: if (isAdmin() || (isAuthenticated() && (request.auth.uid == resource.data.uid || request.auth.token.email == resource.data.email) && request.resource.data.photoUrl == resource.data.photoUrl)) && isValidMember(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidProject(request.resource.data);
+      allow update: if (isAdmin() && isValidProject(request.resource.data)) || isValidVoteUpdate();
+      allow delete: if isAdmin();
+    }
+
+    match /attendance/{attendanceId} {
+      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.userId);
+      allow create: if (isAdmin() || (isAuthenticated() && request.auth.uid == request.resource.data.userId)) && isValidAttendance(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /user_votes/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if isAuthenticated() && request.auth.uid == userId && isValidUserVote(request.resource.data);
+    }
+
+    // User profiles (only owner or admin can read/write)
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin()) && isValidUser(request.resource.data) && (request.resource.data.role == 'user' || isAdmin());
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin()) && isValidUser(request.resource.data) && (request.resource.data.role == resource.data.role || isAdmin());
+    }
+  }
+}

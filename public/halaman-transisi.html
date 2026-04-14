@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menuju Dokumentasi - Nama Organisasi</title>
+    <style>
+        /* Base Styles - Clean Minimalist Dark Mode */
+        :root {
+            --bg-color: #09090b; /* zinc-950 */
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa; /* zinc-400 */
+            --accent: #f59e0b; /* amber-500 */
+            --accent-hover: #d97706; /* amber-600 */
+            --card-bg: #18181b; /* zinc-900 */
+            --border-color: #27272a; /* zinc-800 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 24px;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Saweria Button Styling */
+        .saweria-container {
+            width: 100%;
+            max-width: 728px;
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.3);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .saweria-container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -10px rgba(245, 158, 11, 0.4);
+        }
+
+        .saweria-title {
+            font-weight: 900;
+            font-size: 18px;
+            color: #000000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .saweria-btn {
+            background-color: #ffffff;
+            color: var(--accent);
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Typography */
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Countdown & Progress */
+        .countdown-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .countdown-number {
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            width: 100%;
+            border-radius: 999px;
+            transition: width 1s linear;
+        }
+
+        /* Button */
+        .btn-continue {
+            display: none; /* Hidden initially */
+            background-color: var(--accent);
+            color: #000000;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.39);
+        }
+
+        .btn-continue:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.23);
+        }
+
+        /* Error State */
+        .error-state {
+            display: none;
+            color: #ef4444;
+            font-weight: bold;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ad-slot {
+                /* On mobile, standard banner is usually 320x50 or 300x250 */
+                height: auto;
+                min-height: 90px;
+                padding: 20px;
+            }
+            .title {
+                font-size: 24px;
+            }
+            .countdown-number {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- ========================================== -->
+        <!-- SAWERIA SUPPORT BUTTON (TOP)               -->
+        <!-- ========================================== -->
+        <a href="https://saweria.co/cinegraphnepal" target="_blank" class="saweria-container">
+            <span class="saweria-title">Dukung Kreativitas Kami</span>
+            <div class="saweria-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Support di Saweria
+            </div>
+        </a>
+
+        <div class="header-text">
+            <h1 class="title" id="main-title">Menyiapkan Tautan Anda</h1>
+            <p class="subtitle" id="main-subtitle">Harap tunggu sebentar, Anda akan segera diarahkan ke Google Drive Dokumentasi.</p>
+        </div>
+
+        <div class="error-state" id="error-message">
+            Tautan tidak valid. Parameter URL tidak ditemukan.
+        </div>
+
+        <div class="countdown-wrapper" id="countdown-section">
+            <div class="countdown-number" id="countdown">5</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <a href="#" class="btn-continue" id="continue-btn">Lanjutkan ke Dokumentasi</a>
+
+        <!-- ========================================== -->
+        <!-- SAWERIA SUPPORT BUTTON (BOTTOM)            -->
+        <!-- ========================================== -->
+        <a href="https://saweria.co/cinegraphnepal" target="_blank" class="saweria-container">
+            <span class="saweria-title">Bantu Kami Terus Berkarya</span>
+            <div class="saweria-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Support di Saweria
+            </div>
+        </a>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Ambil parameter URL (contoh: ?url=https://drive.google.com/...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUrl = urlParams.get('url');
+            
+            const countdownEl = document.getElementById('countdown');
+            const progressBar = document.getElementById('progress-bar');
+            const continueBtn = document.getElementById('continue-btn');
+            const countdownSection = document.getElementById('countdown-section');
+            const errorMessage = document.getElementById('error-message');
+            const mainTitle = document.getElementById('main-title');
+            const mainSubtitle = document.getElementById('main-subtitle');
+            
+            let timeLeft = 5; // Waktu mundur dalam detik
+            
+            if (targetUrl) {
+                // Set link pada tombol
+                continueBtn.href = targetUrl;
+                
+                // Mulai interval countdown
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    countdownEl.textContent = timeLeft;
+                    
+                    // Update lebar progress bar
+                    const percentage = (timeLeft / 5) * 100;
+                    progressBar.style.width = percentage + '%';
+                    
+                    // Jika waktu habis
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        
+                        // Sembunyikan countdown & tampilkan tombol
+                        countdownSection.style.display = 'none';
+                        continueBtn.style.display = 'inline-block';
+                        mainTitle.textContent = 'Mengalihkan...';
+                        mainSubtitle.textContent = 'Anda sedang dialihkan ke Google Drive.';
+                        
+                        // ==========================================
+                        // AUTO-REDIRECT
+                        // ==========================================
+                        window.location.href = targetUrl;
+                    }
+                }, 1000);
+            } else {
+                // Jika tidak ada parameter URL
+                countdownSection.style.display = 'none';
+                errorMessage.style.display = 'block';
+                mainTitle.style.display = 'none';
+                mainSubtitle.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
